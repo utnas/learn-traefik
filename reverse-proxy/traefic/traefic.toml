@@ -1,0 +1,46 @@
+debug = false
+
+logLevel = "DEBUG"
+defaultEntryPoints = ["http", "https"]
+
+traefikLogsFile = "/opt/traefik/traefik-stdout.log"
+accessLogsFile = "/opt/traefik/traefik-stdout.log"
+
+[api]
+  entryPoint = "traefik"
+  dashboard = true
+  address = ":8080"
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+       [[entryPoints.https.tls.certificates]]
+       certFile = "/certs/locahost.crt"
+       keyFile = "/certs/locahost.key"
+
+[retry]
+
+[docker]
+    endpoint = "unix:///var/run/docker.sock"
+    domain = "localhost.com" # "my-awesome-app.org"
+    watch = true
+
+#[acme]
+#    email = "your-email-here@my-awesome-app.org"
+#    storage = "acme.json"
+#    entryPoint = "https"
+#    onHostRule = true
+
+#[acme.httpChallenge]
+#    entryPoint = "http"
+
+[metrics]
+  [metrics.prometheus]
+    entryPoint = "traefik"
+    buckets = [0.1,0.3,1.2,5.0]
